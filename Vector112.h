@@ -52,6 +52,7 @@ public:
 
 	// вернуть элемент по индексу
 	int operator[](int index) const;
+	int& operator[](int index);
 
 	friend ostream& operator<<(ostream& out, const Vector112& arr);
 	friend istream& operator>>(istream& in, Vector112& arr);

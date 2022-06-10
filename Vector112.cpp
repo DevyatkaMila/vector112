@@ -89,12 +89,38 @@ void Vector112::pop_back()
 	this->arr = n_arr;
 }
 
-void Vector112::push_front(int val) // дома
+void Vector112::push_front(int val)	
 {
+	if (this->arr == nullptr) {
+		this->arr = new int[++this->len]{ val };
+		return;
+	}
+
+	int* n_arr = new int[++this->len];
+	n_arr[0] = val;
+	for (int i = 0; i < this->len - 1; i++) {
+		n_arr[i + 1] = this->arr[i];
+	}
+	delete[] this->arr;
+	this->arr = n_arr;
 }
 
-void Vector112::pop_front() // дома
+void Vector112::pop_front()
 {
+	if (this->arr == nullptr)
+		return;
+
+	if (this->len == 1) {
+		this->~Vector112();
+		return;
+	}
+
+	int* n_arr = new int[--this->len];
+	for (int i = 1; i < this->len + 1; i++) {
+		n_arr[i - 1] = this->arr[i];
+	}
+	delete[] this->arr;
+	this->arr = n_arr;
 }
 
 void Vector112::print() const
@@ -105,12 +131,30 @@ void Vector112::print() const
 	cout << endl;
 }
 
-void Vector112::printMaxElem() const  // дома
+void Vector112::printMaxElem() const
 {
+	if (this->arr == nullptr)
+		return;
+
+	int max = this->arr[0];
+	for (int i = 1; i < this->len; i++) {
+		if (max < this->arr[i])
+			max = this->arr[i];
+	}
+	cout << max << endl;
 }
 
-void Vector112::printMinElem() const   // дома
+void Vector112::printMinElem() const
 {
+	if (this->arr == nullptr)
+		return;
+
+	int min = this->arr[0];
+	for (int i = 1; i < this->len; i++) {
+		if (min > this->arr[i])
+			min = this->arr[i];
+	}
+	cout << min << endl;
 }
 
 void Vector112::insert(int index, int val)
@@ -145,14 +189,59 @@ void Vector112::insert(int index, int val)
 
 void Vector112::erase(int index)
 {
+	if (this->len == 0)
+		return;
+
+	if (index > this->len || index < 0)
+		return;
+
+	if (this->len == 1)
+		this->~Vector112();
+
+	int* n_arr = new int[this->len - 1];
+	for (int i = 0; i < this->len; i++) {
+		if (i < index)
+			n_arr[i] = this->arr[i];
+		else if (i > index)
+			n_arr[i - 1] = this->arr[i];
+	}
+	this->len--;
+	delete[] this->arr;
+	this->arr = n_arr;
 }
 
 void Vector112::remove(int val)
 {
+	if (this->arr == nullptr)
+		return;
+
+	int count = 0;
+	for (int i = 0; i < this->len; i++)
+		if (this->arr[i] == val)
+			count++;
+
+	if (count == 0)
+		return;
+
+	if (count == this->len) {
+		this->~Vector112();
+		return;
+	}
+
+	int* n_arr = new int[this->len - count];
+	for (int i = 0, k = 0; i < this->len; i++) {
+		if (this->arr[i] != val) {
+			n_arr[k++] = this->arr[i];
+		}
+	}
+	this->len -= count;
+	delete[] this->arr;
+	this->arr = n_arr;
 }
 
 void Vector112::clear()
 {
+	this->~Vector112();
 }
 
 bool Vector112::empty() const
@@ -162,7 +251,13 @@ bool Vector112::empty() const
 
 int Vector112::operator[](int index) const
 {
-	return 0;
+
+	return this->arr[index];
+}
+
+int& Vector112::operator[](int index)
+{
+	return this->arr[index];
 }
 
 ostream& operator<<(ostream& out, const Vector112& arr)
